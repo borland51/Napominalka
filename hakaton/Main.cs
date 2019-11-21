@@ -96,8 +96,12 @@ namespace hakaton
                     break;
                 case 2:
                     string[] dirs = Directory.GetFiles(TrshConfig.SettFile, "*.xls*");
-                    foreach(string file in dirs)
-                        GetExcelInDataGrid(file);
+                    foreach (string file in dirs)
+                    {
+                        var f = new FileInfo(file);
+                        if(f.Name[0] != '~')
+                            GetExcelInDataGrid(file);
+                    }
                     break;
             }
 
@@ -436,6 +440,9 @@ namespace hakaton
         private void timer1_Tick(object sender, EventArgs e)
         {
             LoadForm(false);
+
+            if (sMess == null)
+                return;
 
             if (WindowState == FormWindowState.Minimized)
                 notifyIcon1.ShowBalloonTip(10000, "Обновлено!","Приложение получило новые данные по договорам, зайдите в приложение...",ToolTipIcon.Info);
