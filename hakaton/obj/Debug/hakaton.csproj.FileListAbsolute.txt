@@ -37,3 +37,4 @@ C:\Users\Иван\Source\Repos\Napominalka2\hakaton\obj\Debug\hakaton.Properties
 C:\Users\Иван\Source\Repos\Napominalka2\hakaton\obj\Debug\hakaton.Settings.resources
 C:\Users\Иван\Source\Repos\Napominalka2\hakaton\obj\Debug\hakaton.csproj.GenerateResource.Cache
 C:\Users\Иван\Source\Repos\Napominalka2\hakaton\obj\Debug\hakaton.Main.resources
+C:\Users\Иван\Source\Repos\Napominalka2\hakaton\obj\Debug\hakaton.Loading.resources

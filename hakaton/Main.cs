@@ -26,6 +26,8 @@ namespace hakaton
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            notifyIcon1.Visible = false;
+
             if (!TrshConfig.GetConfig())
                 MessageBox.Show("Это первый запуск программы, пожалуйста настройте её.");
             else if (TrshConfig.SettType == 0)
@@ -130,6 +132,10 @@ namespace hakaton
         {
             Excel.Application ObjWorkExcel = null;
             Excel.Workbook ObjWorkBook = null;
+            double percent = 0, addPerc = 0;
+
+            Loading frm = new Loading();
+            frm.Show();
 
             try
             {
@@ -142,11 +148,16 @@ namespace hakaton
 
                 var lastCell = ObjWorkSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell);
 
+                addPerc = 100.0 / lastCell.Row;
+
                 DateTime nDate, date = DateTime.Today;
                 string[] list = new string [lastCell.Column];
 
                 for (int i = 0; i < lastCell.Row; i++)
                 {
+                    percent += addPerc;
+                    frm.SetProgress(Math.Round(percent));
+
                     for (int j = 0; j < lastCell.Column; j++)
                         list[j] = ObjWorkSheet.Cells[i + 1, j + 1].Text.ToString();
 
@@ -175,6 +186,8 @@ namespace hakaton
 
                 if (ObjWorkExcel != null)
                     ObjWorkExcel.Quit(); // выйти из экселя
+
+                frm.Close();
             }
         }
 
@@ -249,7 +262,7 @@ namespace hakaton
 
         void UpdateLabel()
         {
-            label1.Text = "Окончатся через " + GetDays[SelectedGrid].ToString() + " " + get_wordend(GetDays[SelectedGrid], "день", "дня", "дней") + ".";
+            label1.Text = "Срок действия "+ get_wordend(sGrids[SelectedGrid].RowCount, "договора", "договоров", "договоров") +  " истечёт через " + GetDays[SelectedGrid].ToString() + " " + get_wordend(GetDays[SelectedGrid], "день", "дня", "дней") + ".";
         }
 
         string get_wordend(int day, string first, string second, string third)
@@ -372,6 +385,22 @@ namespace hakaton
             range.Borders.get_Item(Excel.XlBordersIndex.xlInsideHorizontal).LineStyle = Excel.XlLineStyle.xlContinuous;
             range.Borders.get_Item(Excel.XlBordersIndex.xlInsideVertical).LineStyle = Excel.XlLineStyle.xlContinuous;
             range.Borders.get_Item(Excel.XlBordersIndex.xlEdgeTop).LineStyle = Excel.XlLineStyle.xlContinuous;
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            notifyIcon1.Visible = false;
+            this.ShowInTaskbar = true;
+            WindowState = FormWindowState.Normal;
+        }
+
+        private void Main_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                this.ShowInTaskbar = false;
+                notifyIcon1.Visible = true;
+            }
         }
     }
 }
