@@ -93,6 +93,7 @@ namespace hakaton
             }
 
             int i = -1;
+            string sMess = null;
             while(++i < sGrids.Count)
             {
                 if (sGrids[i].Rows.Count == 0)
@@ -109,7 +110,11 @@ namespace hakaton
                     continue;
                 }
                 else
+                {
                     this.Controls.Add(sGrids[i]);
+                    sMess += "Через " + GetDays[i].ToString() + " " + get_wordend(GetDays[i], "день", "дня", "дней") +
+                            (sGrids[i].RowCount == 1 ? " истечет " : " истекут ") + sGrids[i].RowCount.ToString() + " " + get_wordend(sGrids[i].RowCount, "договор", "договора", "договоров") + "\n";
+                }
             }
 
             switch (sGrids.Count)
@@ -126,6 +131,8 @@ namespace hakaton
 
             SelectedGrid = 0;
             UpdateLabel();
+
+            MessageBox.Show(sMess);
         }
 
         void GetExcelInDataGrid(string fileName)
@@ -225,6 +232,8 @@ namespace hakaton
             grid.Columns[2].Name = "№, дата заключения договора";
             grid.Columns[3].Name = "Срок окончания действия договора";
 
+            grid.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 9.75F, FontStyle.Bold);
+
             for (int i = 0; i < 4; i++)
                grid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
         }
@@ -262,7 +271,13 @@ namespace hakaton
 
         void UpdateLabel()
         {
-            label1.Text = "Срок действия "+ get_wordend(sGrids[SelectedGrid].RowCount, "договора", "договоров", "договоров") +  " истечёт через " + GetDays[SelectedGrid].ToString() + " " + get_wordend(GetDays[SelectedGrid], "день", "дня", "дней") + ".";
+            label1.Text = "Срок действия " + get_wordend(sGrids[SelectedGrid].RowCount, "договора", "договоров", "договоров") + " истечёт через " + GetDays[SelectedGrid].ToString() + " " + get_wordend(GetDays[SelectedGrid], "день", "дня", "дней") + ".";
+            UpdateLabe2();
+        }
+
+        void UpdateLabe2()
+        {
+            label2.Text = "Количество: " + sGrids[SelectedGrid].RowCount.ToString();
         }
 
         string get_wordend(int day, string first, string second, string third)
