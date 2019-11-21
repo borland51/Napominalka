@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Security.Cryptography;
 
 namespace hakaton
 {
@@ -18,6 +19,9 @@ namespace hakaton
         List<DataGridView> sGrids = new List<DataGridView>();
         int SelectedGrid = -1;
         static public bool isLoaded = false;
+        string sMess = null;
+
+        const int SET_INTERVAL = 60 * 60 * 1000;
 
         public Main()
         {
@@ -27,6 +31,7 @@ namespace hakaton
         private void Form1_Load(object sender, EventArgs e)
         {
             notifyIcon1.Visible = false;
+            timer1.Interval = SET_INTERVAL;
 
             if (!TrshConfig.GetConfig())
                 MessageBox.Show("Это первый запуск программы, пожалуйста настройте её.");
@@ -42,8 +47,10 @@ namespace hakaton
             LoadForm();
         }
 
-        public void LoadForm()
+        public void LoadForm(bool msg = true)
         {
+            timer1.Enabled = false;
+
             SelectedGrid = -1;
             SetGrid(dataGridView1);
 
@@ -71,12 +78,14 @@ namespace hakaton
             button1.Visible = false;
             button2.Visible = false;
 
-            LoadExcel();
+            LoadExcel(msg);
             isLoaded = true;
+            timer1.Enabled = true;
         }
 
-        void LoadExcel()
+        void LoadExcel(bool msg = true)
         {
+            sMess = null;
             switch (TrshConfig.GetType(TrshConfig.SettFile))
             {
                 case 0:
@@ -93,7 +102,6 @@ namespace hakaton
             }
 
             int i = -1;
-            string sMess = null;
             while(++i < sGrids.Count)
             {
                 if (sGrids[i].Rows.Count == 0)
@@ -132,7 +140,8 @@ namespace hakaton
             SelectedGrid = 0;
             UpdateLabel();
 
-            MessageBox.Show(sMess);
+            if(msg)
+                MessageBox.Show(sMess);
         }
 
         void GetExcelInDataGrid(string fileName)
@@ -141,8 +150,13 @@ namespace hakaton
             Excel.Workbook ObjWorkBook = null;
             double percent = 0, addPerc = 0;
 
-            Loading frm = new Loading();
-            frm.Show();
+            Loading frm = null;
+
+            if (WindowState != FormWindowState.Minimized)
+            {
+                frm = new Loading();
+                frm.Show();
+            }
 
             try
             {
@@ -194,7 +208,8 @@ namespace hakaton
                 if (ObjWorkExcel != null)
                     ObjWorkExcel.Quit(); // выйти из экселя
 
-                frm.Close();
+                if(frm != null)
+                    frm.Close();
             }
         }
 
@@ -416,6 +431,27 @@ namespace hakaton
                 this.ShowInTaskbar = false;
                 notifyIcon1.Visible = true;
             }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            LoadForm(false);
+
+            if (WindowState == FormWindowState.Minimized)
+                notifyIcon1.ShowBalloonTip(10000, "Обновлено!","Приложение получило новые данные по договорам, зайдите в приложение...",ToolTipIcon.Info);
+
+            MessageBox.Show(sMess);
+            
+        }
+
+        string GetFileHash(string filepath)
+        {
+            var md5 = MD5.Create();
+            var stream = File.OpenRead(filepath);
+            string hash = Encoding.Default.GetString(md5.ComputeHash(stream));
+            stream.Close();
+
+            return hash;
         }
     }
 }
