@@ -84,7 +84,6 @@ namespace hakaton
             catch
             {
                 MessageBox.Show("Вы неправильно указали дни!\nДни нужно указвать через запятую без пробелов\nНапример: 15,45", "Ошибка!");
-                //MessageBox.Show(ex.ToString(), "Ошибка!");
             }
 
             if (save)

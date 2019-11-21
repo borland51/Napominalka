@@ -27,3 +27,6 @@ C:\Users\Иван\Desktop\progaroma\hakaton\obj\Debug\hakaton.Avtoriz.resources
 C:\Users\Иван\Desktop\progaroma\hakaton\obj\Debug\hakaton.Properties.Resources.resources
 C:\Users\Иван\Desktop\progaroma\hakaton\obj\Debug\hakaton.Settings.resources
 C:\Users\Иван\Desktop\progaroma\hakaton\obj\Debug\hakaton.csproj.GenerateResource.Cache
+C:\Users\Иван\Source\Repos\Napominalka2\hakaton\bin\Debug\hakaton.exe.config
+C:\Users\Иван\Source\Repos\Napominalka2\hakaton\obj\Debug\hakaton.exe
+C:\Users\Иван\Source\Repos\Napominalka2\hakaton\obj\Debug\hakaton.pdb
