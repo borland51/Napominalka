@@ -229,12 +229,7 @@ namespace hakaton
                 return;
             
             SelectedGrid = ++SelectedGrid >= sGrids.Count ? 0 : SelectedGrid;
-
-            if(SelectedGrid > 0)
-                sGrids[SelectedGrid - 1].Visible = false;
-            else
-                sGrids[sGrids.Count - 1].Visible = false;
-
+            sGrids[((SelectedGrid > 0) ? SelectedGrid : sGrids.Count) - 1].Visible = false;
             sGrids[SelectedGrid].Visible = true;
 
             UpdateLabel();
@@ -274,6 +269,7 @@ namespace hakaton
 
         private void button4_Click(object sender, EventArgs e)
         {
+            Excel.Application ex = null;
             try
             {
                 if(SelectedGrid == -1)
@@ -294,9 +290,7 @@ namespace hakaton
                 }
 
                 //Объявляем приложение
-                Excel.Application ex = new Excel.Application();
-                //Отобразить Excel
-                ex.Visible = true;
+                ex = new Excel.Application();
                 //Количество листов в рабочей книге
                 ex.SheetsInNewWorkbook = 1;
                 //Добавить рабочую книгу
@@ -316,8 +310,6 @@ namespace hakaton
                 sheet.Cells[1, 7] = "№, дата заключения договора";
                 sheet.Cells[1, 9] = "Срок окончания действия договора ";
 
-                SetLine(3, 3, sheet, arr1[0], arr2[arr2.Length - 1]);
-
                 int row = 2;
                 for (int i = 0; i < grid.Rows.Count; i++)
                 {
@@ -331,19 +323,26 @@ namespace hakaton
                     row++;
                 }
 
-                SetLine(row, row, sheet, arr1[0], arr2[arr2.Length - 1]);
+                /*SetLine(row, row, sheet, arr1[0], arr2[arr2.Length - 1]);
                 goto_range(++row, row, sheet, arr1, arr2);
-                sheet.Cells[row, 1] = $"Всего: {grid.Rows.Count}";
+                sheet.Cells[row, 1] = $"Всего: {grid.Rows.Count}";*/
 
-                border_set(sheet, arr1[0], arr2[arr2.Length - 1], row);
+                border_set(sheet, arr1[0], arr2[arr2.Length - 1], row-1);
 
                 ex.Application.ActiveWorkbook.SaveAs(saveFileDialog1.FileName, Type.Missing,
                   Type.Missing, Type.Missing, Type.Missing, Type.Missing, Excel.XlSaveAsAccessMode.xlNoChange,
                   Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+
+                MessageBox.Show("Экспорт завершен успешно!");
             }
-            catch (Exception ex)
+            catch (Exception exc)
             {
-                MessageBox.Show(ex.Message, "Произошла ошибка!");
+                MessageBox.Show(exc.Message, "Произошла ошибка!");
+            }
+            finally
+            {
+                if(ex != null)
+                    ex.Quit();
             }
         }
 
