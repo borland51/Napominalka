@@ -14,8 +14,8 @@ namespace hakaton
     public partial class Settings : Form
     {
         string oldDat = null, oldPath;
-        Avtoriz form;
-        public Settings(Avtoriz frm)
+        Main form;
+        public Settings(Main frm)
         {
             InitializeComponent();
             form = frm;
@@ -91,7 +91,7 @@ namespace hakaton
                 if (TrshConfig.CreateConfig(true))
                 {
                     MessageBox.Show("Настройки сохранены!");
-                    if (Avtoriz.isLoaded)
+                    if (Main.isLoaded)
                         form.LoadForm();
 
                 }
